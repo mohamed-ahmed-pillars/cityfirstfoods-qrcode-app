@@ -1,65 +1,78 @@
+import { db } from "@/lib/db";
+import { socialLinks } from "@/lib/schema";
+import { asc, eq } from "drizzle-orm";
+import Link from "next/link";
 import Image from "next/image";
+import SocialCarousel from "@/components/public/SocialCarousel";
+import BackgroundVideo from "@/components/public/BackgroundVideo";
 
-export default function Home() {
+export const dynamic = "force-dynamic";
+
+export default async function HomePage() {
+  const links = await db
+    .select()
+    .from(socialLinks)
+    .where(eq(socialLinks.active, true))
+    .orderBy(asc(socialLinks.displayOrder));
+
+  const appName = process.env.NEXT_PUBLIC_APP_NAME || "Cityfirstfoods";
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+    <main className="min-h-screen relative flex flex-col items-center overflow-x-hidden" style={{ background: '#ffffff', fontFamily: '"Capriola", sans-serif' }}>
+      {/* Background video */}
+      <BackgroundVideo src="/5538178-uhd_4096_2160_25fps.mp4" />
+
+      {/* Black overlay */}
+      <div className="absolute inset-0" style={{ background: 'rgba(0,0,0,0.7)', zIndex: 1 }} />
+
+      {/* Content */}
+      <div className="relative z-10 w-full py-14 flex flex-col items-center">
+
+        {/* Logo & Brand */}
+        <div className="flex flex-col items-center mb-10 px-4">
+          <div className="relative mb-5 w-72 h-32">
             <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+              src="/main-logo.png"
+              alt={appName}
+              fill
+              className="object-contain"
+              priority
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+          </div>
+
+          <h1 className="text-2xl font-bold tracking-tight" style={{ fontFamily: '"Co Headline", sans-serif' }}>
+            <span style={{ color: '#006443' }}>CITY</span>
+            <span style={{ color: '#F16726' }}>{appName.slice(4)}</span>
+          </h1>
+          <p className="mt-1.5 text-sm">
+            <span style={{ color: '#006443' }}>Fresh. </span>
+            <span style={{ color: '#F16726' }}>Global. </span>
+            <span style={{ color: '#006443' }}>Reliable. </span>
+            <span style={{ color: '#F16726' }}>Intentional.</span>
+          </p>
+
+          {/* Divider */}
+          <div className="mt-5 flex items-center gap-2">
+            <span className="w-6 h-px bg-white/20" />
+            <span className="text-base font-bold tracking-widest" style={{ fontFamily: '"Co Headline", sans-serif' }}>
+              <span style={{ color: '#006443' }}>CONNECT </span>
+              <span style={{ color: '#F16726' }}>WITH </span>
+              <span style={{ color: '#006443' }}>US</span>
+            </span>
+            <span className="w-6 h-px bg-white/20" />
+          </div>
         </div>
-      </main>
-    </div>
+
+        {/* Social Links Carousel */}
+        <div className="w-full" style={{ marginTop: "50px" }}>
+          <SocialCarousel links={links} />
+        </div>
+
+        {/* Footer */}
+        <footer className="mt-14 flex flex-col items-center gap-2 px-4">
+
+        </footer>
+      </div>
+    </main>
   );
 }
